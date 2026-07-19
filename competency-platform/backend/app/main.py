@@ -9,6 +9,13 @@ from collections.abc import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.errors import PlatformError, platform_error_handler
+from app.core.middleware import (
+    RateLimitMiddleware,
+    RequestLoggingMiddleware,
+    TenantResolutionMiddleware,
+)
+
 from app.api.v1 import (
     auth,
     competencies,
@@ -29,7 +36,7 @@ from app.core.neo4j import init_neo4j, close_neo4j
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown events."""
     # Startup
-    await init_redis()
+    app.state.redis = await init_redis()
     try:
         await init_neo4j()
     except Exception:
@@ -52,6 +59,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Register error handler
+app.add_exception_handler(PlatformError, platform_error_handler)
+
 # -----------------------------------------------------------------
 # Middleware stack (order matters: outer -> inner)
 # -----------------------------------------------------------------
@@ -66,6 +76,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(RequestLoggingMiddleware)
+app.add_middleware(TenantResolutionMiddleware)
 
 # -----------------------------------------------------------------
 # Route registration — Spec §9.1 Listing 11, lines 30-39
