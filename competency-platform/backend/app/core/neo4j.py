@@ -1,38 +1,44 @@
-"""Neo4j driver for the Skill DAG graph database.
-
-Spec reference: §2.2 (Neo4j 5 Community, Skill DAG and dependencies).
-"""
-
+# app/core/neo4j.py
 from neo4j import AsyncGraphDatabase, AsyncDriver
-
 from app.core.config import settings
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
-# Global driver — initialized on app startup
-_neo4j_driver: AsyncDriver | None = None
+_driver: AsyncDriver | None = None
 
 
 async def init_neo4j() -> AsyncDriver:
-    """Initialize the Neo4j async driver. Called in app lifespan."""
-    global _neo4j_driver
-    _neo4j_driver = AsyncGraphDatabase.driver(
+    """Initialize the Neo4j async driver. Call once at app startup."""
+    global _driver
+    _driver = AsyncGraphDatabase.driver(
         settings.NEO4J_URI,
         auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
+        max_connection_pool_size=50,
+        connection_acquisition_timeout=30,
     )
     # Verify connectivity
-    await _neo4j_driver.verify_connectivity()
-    return _neo4j_driver
+    await _driver.verify_connectivity()
+    return _driver
 
 
-async def close_neo4j() -> None:
-    """Close the Neo4j driver. Called in app lifespan."""
-    global _neo4j_driver
-    if _neo4j_driver:
-        await _neo4j_driver.close()
-        _neo4j_driver = None
+async def close_neo4j():
+    """Close the Neo4j driver. Call at app shutdown."""
+    global _driver
+    if _driver:
+        await _driver.close()
+        _driver = None
 
 
-async def get_neo4j_driver() -> AsyncDriver:
-    """FastAPI dependency that returns the Neo4j driver."""
-    if _neo4j_driver is None:
-        raise RuntimeError("Neo4j not initialized. Call init_neo4j() first.")
-    return _neo4j_driver
+def get_neo4j_driver() -> AsyncDriver:
+    """Get the initialized Neo4j driver instance."""
+    if _driver is None:
+        raise RuntimeError("Neo4j driver not initialized. Call init_neo4j() first.")
+    return _driver
+
+
+@asynccontextmanager
+async def get_neo4j_session() -> AsyncGenerator:
+    """Async context manager for Neo4j sessions."""
+    driver = get_neo4j_driver()
+    async with driver.session(database="neo4j") as session:
+        yield session

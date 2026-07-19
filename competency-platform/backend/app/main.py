@@ -39,11 +39,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.redis = await init_redis()
     try:
         await init_neo4j()
-    except Exception:
-        # Neo4j may not be available during initial dev
+        # Run constraint creation
+        from app.core.neo4j import get_neo4j_session
+        async with get_neo4j_session() as session:
+            await session.run("CREATE CONSTRAINT competency_id_unique IF NOT EXISTS FOR (c:Competency) REQUIRE c.id IS UNIQUE")
+            await session.run("CREATE CONSTRAINT skill_id_unique IF NOT EXISTS FOR (s:Skill) REQUIRE s.id IS UNIQUE")
+            await session.run("CREATE CONSTRAINT employee_id_unique IF NOT EXISTS FOR (e:Employee) REQUIRE e.id IS UNIQUE")
+    except Exception as e:
+        # Neo4j may not be available during initial dev or constraint creation failed
         import structlog
         logger = structlog.get_logger()
-        logger.warning("Neo4j connection failed — running without graph DB")
+        logger.warning(f"Neo4j startup failed: {e} — running without graph DB")
     yield
     # Shutdown
     await close_redis()
