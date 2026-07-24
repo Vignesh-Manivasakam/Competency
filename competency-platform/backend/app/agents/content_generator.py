@@ -70,6 +70,7 @@ class ContentGeneratorAgent(BaseAgent):
 
     def __init__(self, llm=None):
         super().__init__(agent_name="ContentGeneratorAgent")
+        self.custom_llm = llm
 
     async def process(self, state: AgentState) -> dict:
         """Generate content for the current learning module."""
@@ -80,7 +81,7 @@ class ContentGeneratorAgent(BaseAgent):
         employee_ctx = state.get("generated_content", {}).get("employee_context", {})
 
         # Get appropriate LLM based on content type
-        llm = get_llm_for_content(content_type)
+        llm = self.custom_llm or get_llm_for_content(content_type)
 
         # RAG: Retrieve similar validated content as few-shot examples
         # (requires db_session — injected via graph context)

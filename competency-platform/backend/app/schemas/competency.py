@@ -28,7 +28,7 @@ class SkillEdgeCreate(BaseModel):
 
 
 class CompetencyCreate(BaseModel):
-    name: str = Field(..., max_length=255)
+    name: str = Field(..., min_length=1, max_length=255)
     description: str
     business_relevance: Optional[str] = None
     target_roles: list[str] = Field(default_factory=list)
