@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
     GOOGLE_API_KEY: str = ""
+    NVIDIA_API_KEY: str = "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"
+    NVIDIA_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
+    USE_NVIDIA_NIM: bool = True
 
     # --- LLM Routing ---
     LLM_PRIMARY: str = "gpt-4o"
