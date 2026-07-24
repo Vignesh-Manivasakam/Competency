@@ -1,0 +1,42 @@
+# ============================================
+# Competency Intelligence Platform
+# ============================================
+
+# Environment secrets
+.env
+.env.local
+.env.production
+.env.staging
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+*.egg-info/
+dist/
+build/
+coverage.xml
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.next/
+
+# Docker volumes
+pgdata/
+redisdata/
+neo4jdata/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

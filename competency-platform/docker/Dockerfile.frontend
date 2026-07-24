@@ -1,0 +1,48 @@
+# ============================================
+# Competency Intelligence Platform — Frontend
+# Multi-stage build: Node 20 + nginx
+# Spec reference: §16 Docker Compose
+# ============================================
+
+# --- Stage 1: Build React app ---
+FROM node:20-alpine AS builder
+
+WORKDIR /build
+
+# Copy package files first for layer caching
+COPY frontend/package.json frontend/package-lock.json* frontend/yarn.lock* ./
+RUN npm ci --prefer-offline
+
+# Copy source and build
+COPY frontend/ ./
+ENV VITE_API_URL=/api/v1
+ENV VITE_WS_URL=/api/v1/ws
+RUN npm run build
+
+# --- Stage 2: Serve with nginx ---
+FROM nginx:1.27-alpine AS runtime
+
+LABEL maintainer="competency-platform-team"
+LABEL description="Competency Intelligence Platform — React Frontend"
+
+# Remove default nginx config
+RUN rm -rf /etc/nginx/conf.d/default.conf /usr/share/nginx/html/*
+
+# Copy custom nginx config for SPA routing
+COPY docker/nginx-frontend.conf /etc/nginx/conf.d/default.conf
+
+# Copy built React app from builder stage
+COPY --from=builder /build/dist /usr/share/nginx/html
+
+# Security: run as non-root
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    touch /var/run/nginx.pid && chown nginx:nginx /var/run/nginx.pid
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget -q --spider http://localhost:3000/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

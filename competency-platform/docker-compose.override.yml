@@ -1,0 +1,40 @@
+# ============================================
+# Development overrides — hot-reload, debug logging
+# Auto-loaded with: docker compose up
+# ============================================
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+      target: runtime
+    volumes:
+      # Mount source code for hot-reload
+      - ./backend/app:/app/app:ro
+      - ./backend/alembic:/app/alembic:ro
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir /app/app
+      --log-level debug
+    environment:
+      APP_ENV: development
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+      target: builder
+    volumes:
+      - ./frontend/src:/build/src:ro
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:8000/api/v1
+      VITE_WS_URL: ws://localhost:8000/api/v1/ws

@@ -1,0 +1,49 @@
+# ============================================
+# Docker build context exclusions
+# ============================================
+
+# Version control
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment files (secrets!)
+.env
+.env.production
+.env.staging
+.env.local
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Node
+frontend/node_modules/
+frontend/.next/
+
+# Docker
+docker-compose*.yml
+
+# Docs
+*.md
+!README.md
+LICENSE
+
+# Agents workspace
+.agents/
+
+# CI
+.github/

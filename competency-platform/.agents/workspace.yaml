@@ -1,0 +1,72 @@
+# ============================================
+# Antigravity 2.0 — Workspace Configuration
+# Spec reference: §12 Antigravity 2.0 Setup Guide
+# ============================================
+
+workspace:
+  name: competency-intelligence-platform
+  description: >
+    AI-powered Competency Intelligence Platform MVP.
+    Multi-agent workspace with Backend, Frontend, and Test agents
+    working in parallel on the same codebase.
+
+  project_root: .
+
+  knowledge_base:
+    - docs/mvp-spec.pdf            # Full MVP specification
+    - schemas/                     # Pydantic/SQLModel schemas
+    - docker-compose.prod.yml      # Infrastructure reference
+    - .env.example                 # Environment variable reference
+    - backend/pyproject.toml       # Python dependencies
+    - frontend/package.json        # Node dependencies
+
+agents:
+  - name: backend-agent
+    instructions: .agents/backend-agent.md
+    focus:
+      - backend/app/
+      - backend/alembic/
+      - backend/tests/
+    capabilities:
+      - python
+      - fastapi
+      - sqlmodel
+      - langgraph
+      - langchain
+
+  - name: frontend-agent
+    instructions: .agents/frontend-agent.md
+    focus:
+      - frontend/src/
+      - frontend/public/
+    capabilities:
+      - typescript
+      - react
+      - tailwindcss
+      - shadcn-ui
+
+  - name: test-agent
+    instructions: .agents/test-agent.md
+    focus:
+      - backend/tests/
+      - frontend/src/**/*.test.*
+    capabilities:
+      - pytest
+      - vitest
+      - playwright
+
+conventions:
+  python:
+    formatter: ruff
+    linter: ruff
+    type_checker: mypy
+    test_runner: pytest
+    async_mode: "auto"
+  typescript:
+    formatter: prettier
+    linter: eslint
+    type_checker: tsc
+    test_runner: vitest
+  git:
+    branch_naming: "feat|fix|refactor|docs|test/short-description"
+    commit_format: "conventional"
