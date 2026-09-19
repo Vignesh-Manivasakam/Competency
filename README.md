@@ -11,6 +11,7 @@
 [![NVIDIA NIM](https://img.shields.io/badge/Inference-NVIDIA_NIM_Llama_3.1-76B900.svg)](https://build.nvidia.com/)
 [![Docker](https://img.shields.io/badge/Container-Docker_Compose-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Author](https://img.shields.io/badge/Author-Vignesh_Manivasakam-0A66C2.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/vignesh-manivasakam)
 
 <p align="center">
   <img src="assets/Competency.png" alt="Competency Platform Architecture" width="850"/>
@@ -229,3 +230,11 @@ npx playwright test
 
 ## 🛡️ License
 Distributed under the [MIT License](LICENSE).
+
+---
+
+## 👤 Author
+**Vignesh Manivasakam**
+- 💼 LinkedIn: [Vignesh Manivasakam](https://www.linkedin.com/in/vignesh-manivasakam)
+- 🐙 GitHub: [@Vignesh-Manivasakam](https://github.com/Vignesh-Manivasakam)
+- 📧 Email: [vicky.manivasagam@gmail.com](mailto:vicky.manivasagam@gmail.com)
