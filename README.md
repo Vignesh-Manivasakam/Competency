@@ -204,6 +204,7 @@ uvicorn app.main:app --reload --port 8000
 
 #### Frontend Setup
 ```bash
+# In a new terminal from repository root (or cd ../frontend from backend):
 cd competency-platform/frontend
 npm install
 npm run dev

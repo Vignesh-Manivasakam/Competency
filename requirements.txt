@@ -1,0 +1,1 @@
+-r competency-platform/backend/requirements.txt
