@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppShell } from "@/components/layout/AppShell";
+import LoginPage from "@/pages/LoginPage";
 
 // Manager pages
 import Dashboard from "@/pages/manager/Dashboard";
@@ -63,8 +64,8 @@ export default function App() {
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          {/* Login fallback */}
-          <Route path="/login" element={<div className="flex h-screen items-center justify-center text-muted-foreground">Login Page</div>} />
+          {/* Login — full-screen auth page */}
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />

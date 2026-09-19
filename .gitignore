@@ -1,3 +1,10 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.pytest_cache/
+
 # Environments
 .venv/
 venv/
@@ -16,6 +23,8 @@ jspm_packages/
 *.njsproj
 *.sln
 *.sw?
+.agents/
+CLAUDE.md
 
 # OS metadata
 Thumbs.db
